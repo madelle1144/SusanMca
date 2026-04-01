@@ -10,76 +10,86 @@
             });
         });
 
-        // Picture Slider
-        const sliderTrack = document.getElementById('sliderTrack');
-        const sliderDots = document.querySelectorAll('.slider-dot');
-        let currentSlide = 0;
-
-        function goToSlide(slideIndex) {
-            sliderTrack.style.transform = `translateX(-${slideIndex * 100}%)`;
-            
-            // Update active dot
-            sliderDots.forEach(dot => dot.classList.remove('active'));
-            sliderDots[slideIndex].classList.add('active');
-            
-            currentSlide = slideIndex;
-        }
-
-        // Add click events to dots
-        sliderDots.forEach((dot, index) => {
-            dot.addEventListener('click', () => goToSlide(index));
-        });
-
-        // Auto slide
-        setInterval(() => {
-            currentSlide = (currentSlide + 1) % sliderDots.length;
-            goToSlide(currentSlide);
-        }, 5000);
-
-       
 
         // Payment Method Selection
         const paymentOptions = document.querySelectorAll('.payment-option');
-        const mpesaFields = document.getElementById('mpesaFields');
-        const cardFields = document.getElementById('cardFields');
-        
-        paymentOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove active class from all options
-                paymentOptions.forEach(opt => opt.classList.remove('active'));
-                
-                // Add active class to clicked option
-                this.classList.add('active');
-                
-                // Show/hide relevant fields
-                const method = this.getAttribute('data-method');
-                
-                if (method === 'mpesa') {
-                    mpesaFields.style.display = 'block';
-                    cardFields.style.display = 'none';
-                } else if (method === 'card') {
-                    mpesaFields.style.display = 'none';
-                    cardFields.style.display = 'block';
-                } else {
-                    mpesaFields.style.display = 'none';
-                    cardFields.style.display = 'none';
-                }
+        if (paymentOptions.length > 0) {
+            const mpesaFields = document.getElementById('mpesaFields');
+            const cardFields = document.getElementById('cardFields');
+            
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Show/hide relevant fields
+                    const method = this.getAttribute('data-method');
+                    
+                    if (method === 'mpesa') {
+                        mpesaFields.style.display = 'block';
+                        cardFields.style.display = 'none';
+                    } else if (method === 'card') {
+                        mpesaFields.style.display = 'none';
+                        cardFields.style.display = 'block';
+                    } else {
+                        mpesaFields.style.display = 'none';
+                        cardFields.style.display = 'none';
+                    }
+                });
             });
+        }
+
+        // Modal Functions
+        function showMpesaDetails() {
+            document.getElementById('mpesaModal').classList.add('show');
+        }
+
+        function closeMpesaModal() {
+            document.getElementById('mpesaModal').classList.remove('show');
+        }
+
+        function showBankDetails() {
+            document.getElementById('bankModal').classList.add('show');
+        }
+
+        function closeBankModal() {
+            document.getElementById('bankModal').classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            const mpesaModal = document.getElementById('mpesaModal');
+            const bankModal = document.getElementById('bankModal');
+            
+            if (e.target === mpesaModal) {
+                closeMpesaModal();
+            }
+            if (e.target === bankModal) {
+                closeBankModal();
+            }
         });
 
         // Donation Form Submission
-        document.getElementById('donationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your donation! In a real implementation, this would process your payment.');
-            // In a real implementation, you would integrate with payment gateway APIs here
-        });
+        const donationForm = document.getElementById('donationForm');
+        if (donationForm) {
+            donationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your donation! In a real implementation, this would process your payment.');
+                // In a real implementation, you would integrate with payment gateway APIs here
+            });
+        }
 
-        // Contact Form Submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We will get back to you soon.');
-            // In a real implementation, you would send this data to a server
-        });
+        // Contact Form Submission - Using Formspree
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                // Allow Formspree to handle the submission
+                // Form will POST to https://formspree.io/f/mgvzoyob
+            });
+        }
 
         // Animated Counter for Donation Metrics
         function animateValue(element, start, end, duration) {
@@ -97,15 +107,18 @@
         }
 
         function formatNumber(num) {
-            if (num >= 1000) {
-                return '$' + (num / 1000).toFixed(1) + 'k';
+            if (num >= 1000000) {
+                return 'KSH ' + (num / 1000000).toFixed(1) + 'M';
             }
-            return '$' + num;
+            if (num >= 1000) {
+                return 'KSH ' + (num / 1000).toFixed(0) + 'k';
+            }
+            return 'KSH ' + num;
         }
 
         // Initialize counters when page loads
         window.addEventListener('load', function() {
-            animateValue(document.getElementById('totalRaised'), 0, 24580, 2000);
+            animateValue(document.getElementById('totalRaised'), 0, 2458000, 2000);
             animateValue(document.getElementById('donorsCount'), 0, 1247, 2000);
             
             // Days left calculation (for demonstration, using a fixed end date)
